@@ -1,4 +1,5 @@
 import java.lang.Math;
+import java.text.DecimalFormat;
 
 public class Polynomial {
 	boolean hurwitzFlag;
@@ -70,12 +71,10 @@ public class Polynomial {
 				if(orderOfPolynomial-i!=0)
 					System.out.print("s^"+(orderOfPolynomial-i)+" +");
 			}
-			System.out.println(" have positive coeffients");
-	
+			System.out.println(" have positive coeffients");	
 	}
 	
 	public void CriterionRouthHurwitz(){
-		int x,y,z,u;
 		double[][] b=new double[orderOfPolynomial+1][(int) Math.ceil((orderOfPolynomial+1)/2.0)];
 		for(int j=0;j<2;j++) {
 			for(int i=0;i<(int)Math.ceil((orderOfPolynomial+1)/2.0);i++) {
@@ -83,21 +82,37 @@ public class Polynomial {
 					b[j][i]=coefficients[i*2+j];
 			}
 		}
-		/*
+		
 		for(int j=2;j<orderOfPolynomial+1;j++) {
-			for(int i=0;i<(int)Math.ceil(orderOfPolynomial/2.0);i++) {
-				x=coefficients[1];
+			for(int i=0;i<(int)Math.ceil((orderOfPolynomial+1)/2.0);i++) {
+				b[j][i]=b[j-1][0] * (i+1<(int)Math.ceil((orderOfPolynomial+1)/2.0)? b[j-2][i+1] : 0)
+						-b[j-2][0] * (i+1<(int)Math.ceil((orderOfPolynomial+1)/2.0) ? b[j-1][i+1] : 0);
+				b[j][i]/=b[j-1][0];
+					
+			}
+		}
+		DecimalFormat df = new DecimalFormat(".##");
+		System.out.println();
+		for(int i=0;i<orderOfPolynomial+1;i++) {
+			System.out.print(" s^"+(orderOfPolynomial-i+"  | "));
+			for(int j=0;j<(int)Math.ceil((orderOfPolynomial+1)/2.0);j++) {
+				System.out.print(df.format(b[i][j]) + "   ");
+			}
+			System.out.println();
+		}
+		
+	}
+	
+	
+	
+}
+
+
+/*x=coefficients[1];
 				y=(2*(i+1))<orderOfPolynomial+1 ? coefficients[2*(i+1)] : 0;
 				z=coefficients[0];
 				u=((1+2*(i+1)<orderOfPolynomial+1) ? coefficients[1+2*(i+1)] : 0);
 				b[i]=coefficients[1]*((2*(i+1))<orderOfPolynomial+1? coefficients[2*(i+1)] : 0)
 						-coefficients[0]*((1+2*(i+1)<orderOfPolynomial+1) ? coefficients[1+2*(i+1)] : 0);
 				b[i]/=coefficients[1];
-					
-			}
-		}
-		*/
-	}
-	
-	
-}
+ */
