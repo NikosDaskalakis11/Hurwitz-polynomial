@@ -47,7 +47,7 @@ public class Polynomial {
 	}
 
 	
-	public boolean checkIfAllCoefficientsIsPositive() {
+	public static boolean checkIfAllCoefficientsIsPositive(int orderOfPolynomial,int[] coefficients) {
 		boolean flag=true;
 		for(int i=0;i<=orderOfPolynomial;i++) {
 			if(!(coefficients[i]>0)) {
@@ -76,9 +76,10 @@ public class Polynomial {
 			return flag;
 	}
 	
-	public void CriterionRouthHurwitz(){
+	public static boolean CriterionRouthHurwitz(int[] coefficients){
 		boolean flag;
-		flag=checkIfAllCoefficientsIsPositive();
+		int orderOfPolynomial =coefficients.length-1;
+		flag=checkIfAllCoefficientsIsPositive(orderOfPolynomial,coefficients);
 		System.out.println();
 		if(flag==true) {
 			double[][] b=new double[orderOfPolynomial+1][(int) Math.ceil((orderOfPolynomial+1)/2.0)];
@@ -115,13 +116,15 @@ public class Polynomial {
 			if(stable== false) {
 				System.out.println("the system is unstable");
 				System.out.println();
+				return false;
 			}
 			else {
 				System.out.println("the system is stable and polynomial is Hurwitz");
 				System.out.println();
-			
+				return true;
 			}
 		}
+		else return false;
 	}
 	
 	
