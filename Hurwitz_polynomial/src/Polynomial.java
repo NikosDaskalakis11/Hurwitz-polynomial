@@ -1,7 +1,9 @@
 import java.lang.Math;
+import java.security.Signature;
 import java.text.DecimalFormat;
 
 public class Polynomial {
+	
 	boolean hurwitzFlag;
 	int[] coefficients;
 	int orderOfPolynomial;
@@ -37,17 +39,15 @@ public class Polynomial {
 
 	public void setCoefficients(int[] coefficients) {
 		this.coefficients = coefficients;
+		this.orderOfPolynomial =coefficients.length-1;
 	}
 
 	public int getOrderOfPolynomial() {
 		return orderOfPolynomial;
 	}
 
-	public void setOrderOfPolynomial(int orderOfPolynomial) {
-		this.orderOfPolynomial = orderOfPolynomial;
-	}
 	
-	public void checkIfAllCoefficientsIsPositive() {
+	public boolean checkIfAllCoefficientsIsPositive() {
 		boolean flag=true;
 		for(int i=0;i<=orderOfPolynomial;i++) {
 			if(!(coefficients[i]>0)) {
@@ -63,6 +63,7 @@ public class Polynomial {
 					System.out.print("s^"+(orderOfPolynomial-i)+" +");
 			}
 			System.out.println(" isn't a hurwitz Polynomial");
+			return flag;
 		}
 		else
 			System.out.print("Polynomial ");
@@ -72,35 +73,55 @@ public class Polynomial {
 					System.out.print("s^"+(orderOfPolynomial-i)+" +");
 			}
 			System.out.println(" have positive coeffients");	
+			return flag;
 	}
 	
 	public void CriterionRouthHurwitz(){
-		double[][] b=new double[orderOfPolynomial+1][(int) Math.ceil((orderOfPolynomial+1)/2.0)];
-		for(int j=0;j<2;j++) {
-			for(int i=0;i<(int)Math.ceil((orderOfPolynomial+1)/2.0);i++) {
-				if(i*2+j<=orderOfPolynomial)
-					b[j][i]=coefficients[i*2+j];
-			}
-		}
-		
-		for(int j=2;j<orderOfPolynomial+1;j++) {
-			for(int i=0;i<(int)Math.ceil((orderOfPolynomial+1)/2.0);i++) {
-				b[j][i]=b[j-1][0] * (i+1<(int)Math.ceil((orderOfPolynomial+1)/2.0)? b[j-2][i+1] : 0)
-						-b[j-2][0] * (i+1<(int)Math.ceil((orderOfPolynomial+1)/2.0) ? b[j-1][i+1] : 0);
-				b[j][i]/=b[j-1][0];
-					
-			}
-		}
-		DecimalFormat df = new DecimalFormat(".##");
+		boolean flag;
+		flag=checkIfAllCoefficientsIsPositive();
 		System.out.println();
-		for(int i=0;i<orderOfPolynomial+1;i++) {
-			System.out.print(" s^"+(orderOfPolynomial-i+"  | "));
-			for(int j=0;j<(int)Math.ceil((orderOfPolynomial+1)/2.0);j++) {
-				System.out.print(df.format(b[i][j]) + "   ");
+		if(flag==true) {
+			double[][] b=new double[orderOfPolynomial+1][(int) Math.ceil((orderOfPolynomial+1)/2.0)];
+			for(int j=0;j<2;j++) {
+				for(int i=0;i<(int)Math.ceil((orderOfPolynomial+1)/2.0);i++) {
+					if(i*2+j<=orderOfPolynomial)
+						b[j][i]=coefficients[i*2+j];
+				}
 			}
+			
+			for(int j=2;j<orderOfPolynomial+1;j++) {
+				for(int i=0;i<(int)Math.ceil((orderOfPolynomial+1)/2.0);i++) {
+					b[j][i]=b[j-1][0] * (i+1<(int)Math.ceil((orderOfPolynomial+1)/2.0)? b[j-2][i+1] : 0)
+							-b[j-2][0] * (i+1<(int)Math.ceil((orderOfPolynomial+1)/2.0) ? b[j-1][i+1] : 0);
+					b[j][i]/=b[j-1][0];
+						
+				}
+			}
+			
+			System.out.println("Routh table is: ");
+			for(int i=0;i<orderOfPolynomial+1;i++) {
+				System.out.print("   s^"+(orderOfPolynomial-i+"  | "));
+				for(int j=0;j<(int)Math.ceil((orderOfPolynomial+1)/2.0);j++) {
+					System.out.print(String.format("%,05.2f", b[i][j])+"  ");
+				}
+				System.out.println();
+			}
+			boolean stable=true;
 			System.out.println();
+			for(int i=0;i<orderOfPolynomial-1;i++) {
+				if( Math.signum(b[i][0])!=Math.signum(b[i+1][0]))
+					stable=false;
+			}
+			if(stable== false) {
+				System.out.println("the system is unstable");
+				System.out.println();
+			}
+			else {
+				System.out.println("the system is stable and polynomial is Hurwitz");
+				System.out.println();
+			
+			}
 		}
-		
 	}
 	
 	
@@ -108,11 +129,4 @@ public class Polynomial {
 }
 
 
-/*x=coefficients[1];
-				y=(2*(i+1))<orderOfPolynomial+1 ? coefficients[2*(i+1)] : 0;
-				z=coefficients[0];
-				u=((1+2*(i+1)<orderOfPolynomial+1) ? coefficients[1+2*(i+1)] : 0);
-				b[i]=coefficients[1]*((2*(i+1))<orderOfPolynomial+1? coefficients[2*(i+1)] : 0)
-						-coefficients[0]*((1+2*(i+1)<orderOfPolynomial+1) ? coefficients[1+2*(i+1)] : 0);
-				b[i]/=coefficients[1];
- */
+
